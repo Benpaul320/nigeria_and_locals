@@ -1,0 +1,54 @@
+
+<select name="city_append" id="city_append" >
+    <option value="">Select State</option>
+</select>
+
+<select name="local_append" id="local_append" >
+    <option value="">Select Local</option>
+</select>
+
+
+<script src="jquery-3.5.1.min.js"></script>
+<script>
+    // fetch states 
+    $.ajax({
+        method: "GET",
+        url: 'state.json',
+        dataType: "json",
+        success: resp => {
+            
+            $.each( resp, function( key, val ) {
+                var  option = "<option data-city='" + key +"' value='" + val['state']['name'] + "'>" + val['state']['name'] + "</option>";
+                $( "#city_append" ).append( option );
+            });
+            
+        }
+    })
+
+    function state_selected(x){
+        var id = x.title;
+    }
+    
+    $("#city_append").change(function () {
+        var id = $(this).find(':selected').data('city') ;
+        $.ajax({
+            method: "GET",
+            url: 'state.json',
+            dataType: "json",
+            success: resp => {
+                $.each( resp, function( key, val ) {
+                    if (key == id ) {
+                        var  option = "<option value='" + val['state']['locals']['name'] + "'>" + val['state']['locals']['name'] + "</option>";
+                        var data = val['state']['locals'];
+                        $.each( data, function( _key, _val ){
+                            var  option = "<option value='" + _val['name'] + "'>" + _val['name'] + "</option>";
+                            $( "#local_append" ).append( option );
+                        })
+                    }
+                    
+                });
+                
+            }
+        })
+    });
+</script>
